@@ -28,13 +28,18 @@ class Breadcrumb(object):
     Breadcrumb can have methods to customize breadcrumb object, Breadcrumbs
     class send to us name and url.
     """
-    def __init__(self, name, url):
+    def __init__(self, name, url, attributes=None):
         # HERE
         #
         # If I don't use force_unicode, always runs ok, but have problems on
         # template with unicode text
         self.name = name
         self.url = url
+
+        # set extra attributes
+        if attributes:
+            for name, value in attributes.items():
+                setattr(self, name, value)
 
     def __str__(self):
         return self.__unicode__()
@@ -144,10 +149,10 @@ class Breadcrumbs(Singleton):
                         type(obj[1]) not in (str, unicode)):
                     raise BreadcrumbsInvalidFormat(u"Invalid format for \
                         breadcrumb %s in %s" % (index, type(obj).__name__))
-            if len(obj) != 2:
+            if len(obj) > 3 or len(obj) < 2:
                 raise BreadcrumbsInvalidFormat(
                     u"Wrong itens number in breadcrumb %s in %s. \
-                    You need to send as example (name,url)" % \
+                    You need to send as example (name,url, {attributes...})" % \
                     (index, type(obj).__name__)
                 )
         # for objects and dicts
